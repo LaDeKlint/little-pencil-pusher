@@ -4,6 +4,11 @@
  * and open the template in the editor.
  */
 package littlepencilpusher;
+import dk.sdu.mmmi.rd1.edgedetect.*;
+import java.awt.image.BufferedImage;
+import java.io.File;
+import java.io.IOException;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -14,10 +19,20 @@ public class LittlePencilPusher
 
     /**
      * @param args the command line arguments
+     * @throws java.io.IOException
      */
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
-        // TODO code application logic here
+        EdgeDetector edge = new EdgeDetector("images/3583.jpg");
+        BufferedImage image = edge.getBufferedImage();
+        File outputfile = new File("images/androidny.jpg");
+        ImageIO.write(image, "jpg", outputfile);
+       
+
+        
+                
+  
+        
     }
     
 }
