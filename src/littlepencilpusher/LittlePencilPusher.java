@@ -23,10 +23,11 @@ public class LittlePencilPusher
      */
     public static void main(String[] args) throws IOException
     {
-        EdgeDetector edge = new EdgeDetector("images/ole.jpg");
+        EdgeDetector edge = new EdgeDetector("images/3583.jpg");
         BufferedImage image = edge.getBufferedImage();
-        File outputfile = new File("images/oleny.jpg");
+        File outputfile = new File("images/androidny.jpg");
         ImageIO.write(image, "jpg", outputfile);
+       
 
         
                 
