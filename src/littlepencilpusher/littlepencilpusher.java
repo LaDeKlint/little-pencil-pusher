@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package littlepencilpusher;
 
 import dk.sdu.mmmi.rd1.edgedetect.*;
@@ -14,256 +9,265 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import javax.imageio.ImageIO;
 
-/**
- *
- * @author lars
- */
-public class littlepencilpusher { // start class
+public class littlepencilpusher 
+{ // start class
 
-    /**
-     * @param args the command line arguments
-     * @throws java.io.IOException
-     */
-    public static void main(String[] args) throws IOException { // start main
-        EdgeDetector edge = new EdgeDetector("images/figur.jpg");
+    public static void main(String[] args) throws IOException 
+    { // start main
+        
+        /*
+        Sending image to the Edgedetector, and getting a bufferet image back, meaning a representation
+        og the edge we want to draw.
+        The buffered image is saved as a new image file.
+        */
+        EdgeDetector edge = new EdgeDetector("images/Cirkel.jpg");
         BufferedImage image = edge.getBufferedImage();
-        File outputfile = new File("images/figurny.jpg");
+        File outputfile = new File("images/Cirkelny.jpg");
         ImageIO.write(image, "jpg", outputfile);
 
-        //Picture picture0 = new Picture("images/androidny.jpg"); 
+        /*
+        here we get an array of the edge of the image we can work with. It is a 2d int array of the 
+        magnitude of the image edge. The magnitude array method has been changed to 
+        return a binary truncate magnitude meaning it is eather "0" for black (draw) or "255" for white (don't draw)
+        */  
         int mag[][] = edge.getMagnitudeArray();
 
+        // for method description
         printMagnitudeArray(mag);
-        // magnitude.append(noget);
-
-        //stringBuilder(mag);
-        //System.out.println();
-        //printCoordinatesByRow(mag);    
+            
         coordinates(mag);
         
-        //int testCoordinates = testCoordinates(mag);
-    } // end Main
-
-    public static void printMagnitudeArray(int m[][]) {// start class print
-        for (int row = 0; row < m.length; row++) {//start row for loop
-            for (int column = 0; column < m[row].length; column++) {// start column for loop
-                //System.out.print(m[row][column] + "\t ");
-
-            }// end colum for loop
-            //System.out.println(" end row ");
-        }// end row for loop
-        //System.out.println(m[1][10]);
-    } // end print class      
+        /*
+        Indsæt RobotComm kodelinier her!!!
+        */
+    
+    } // *******************end Main*******************************
 
     
     
     
     
     
+    /*
+    This method prints the magnitude array values, for a grafical representation of the array.
+    It was made during the testfase, and does not carry any other funtionality 
+    than the test opotunity.
+    The print lines have been commented out, as they are not needed for the actual program.
+    The transpose method is also tested here, as an atempt to make an alternative to just
+    change the index output
+    */
+    public static void printMagnitudeArray(int n[][]) 
+    {// start method print
+          
+        int m[][] = new int[n[0].length][n.length];
+        
+        m = transpose(n);
+        
+        for (int columnB = 0 ; columnB < m.length ; columnB++)
+        { // start column for loop
+            for (int rowB = 0 ; rowB < m.length ; rowB++)
+            { // start row for loop
+                //System.out.print(m[columnB][rowB] + "\t");
+                
+            } // end row for loop
+            //System.out.println(" end column");
+        } // end column for loop
+        
+    } // ********************end print method************************
     
     
+    
+
+     
+    /*
+     
+    */
     public static void coordinates(int n[][]) {
-
-        StringBuilder resultRow = new StringBuilder();
+        
+        
+        StringBuilder result = new StringBuilder();
 
         // check rows;
         int m[][] = new int[n[0].length][n.length];
         
         m = transpose(n);
         
-        int currentvalueR;
+        int currentvalue;
 
-        int startIndexR;
+        int startIndex;
+        
+        int counterLine = 0;
 
-        for (int i = 0; i < n.length; i++) {
-            currentvalueR = n[i][0];
-            startIndexR = 0;
-            int indexR = i;
-            int counterR = 0;
-            int trackR = 0;
-            int endIndexR = 0;
+        for (int i = 0; i < n.length; i++) 
+        {
+            
+            currentvalue = n[i][0];
+            
+            startIndex = 0;
+            int index = i;
+            int counter = 0;
+            int track = 0;
+            int endIndex = 0;
 
-            for (int j = 0; j < n[0].length; j++) {
+            for (int j = 0; j < n[0].length; j++) 
+            {
                 
                // System.out.print(n[i][j] + "\t");
                 
-                if (currentvalueR != n[i][j]) {
+                if (currentvalue != n[i][j]) 
+                {
 
-                    indexR = i;
-                    if (counterR >= 1) {
-                        endIndexR = j - 1;
-
-                    }
-                    trackR = endIndexR - startIndexR;
-                    if (trackR != 0 ) {
-                        trackR += 1;
+                    index = i;
+                    if (counter >= 1) {
+                        endIndex = j - 1;
                     }
                     
-                     if (startIndexR != 0 && trackR == 0)
-                    {
-                        trackR += 1;
-                    }
-
-                     System.out.print(indexR + "; " + startIndexR + ":track " + trackR + "\t");
-                    startIndexR = j;
-
-                    currentvalueR = n[i][j];
-                    counterR++;
-                    //System.out.print(startIndex + "; " + endIndex + "\t" );
-
-                }
-
-            }
-
-            System.out.print("\n");  
-            resultRow.append("\n");
-        }
-
-        //System.out.println(resultRow);
-        //System.out.println(count);
-        
-        
-        
-        
-         StringBuilder resultColumn = new StringBuilder();
-        // check colums;
-        int currentvalueC;
-
-        int startIndexC;
-
-        for (int i = 0; i < n.length; i++) {
-            currentvalueC = n[i][0];
-            startIndexC = 0;
-            int indexC = i;
-            int counterC = 0;
-            int trackC = 0;
-            int endIndexC = 0;
-
-            for (int j = 0; j < n[0].length; j++) {
-                
-                //System.out.print(n[i][j] + "\t");
-                
-                if (currentvalueC != n[i][j]) {
-
-                    indexC = i;
-                    if (counterC >= 1) {
-                        endIndexC = j - 1;
-
-                    }
-                    trackC = endIndexC - startIndexC;
-                    if (trackC != 0 ) {
-                        trackC += 1;
+                /*    track = endIndex - startIndex;
+                    if (track != 0 ) {
+                        track += 1;
                     }
                     
-                    if (startIndexC != 0 && trackC == 0)
+                     if (startIndex != 0 && track == 0)
                     {
-                        trackC += 1;
+                        track += 1;
+                    }
+                */
+                    String x = String.format("%5s", i).replace(" ", "0");
+                    String z = null;
+                    String y = null;
+                    
+                    if (n[i][j] == 255)
+                    {
+                        y = String.format("%5s", j - 1).replace(" ", "0");
+                    }
+                    else
+                    {
+                        y = String.format("%5s", j).replace(" ", "0");
+                    }
+                    
+                    if (n[i][j] == 0)
+                    {
+                        z = "D";
+                    }
+                    else
+                    {
+                        z = "U";
+                    }
+                    
+                    result.append("X");
+                    result.append(x);
+                    result.append("Y");
+                    result.append(y);
+                    result.append("Z");
+                    result.append(z);
+                    
+                    
+                    
+                            startIndex = j;
+
+                    currentvalue = n[i][j];
+                    counter++;
+                    
+                }
+
+            }
+
+            
+            counterLine ++;
+            if (counterLine == 15)
+            {
+                result.append("\n");
+                counterLine = 0;
+            }
+            
+        }
+        for (int i = 0; i < n.length; i++) 
+        {
+            
+            currentvalue = n[0][i];
+            startIndex = 0;
+            int index = 0;
+            int counter = 0;
+            int track = 0;
+            int endIndex = 0;
+
+            for (int j = 0; j < n[0].length; j++) 
+            {
+                
+                if (currentvalue != n[j][i]) 
+                {
+
+                    index = j;
+                    if (counter >= 1) {
+                        endIndex = i - 1;
                     }
 
-                     System.out.print(indexC + "; " + startIndexC + ":track " + trackC + "\t");
-                    startIndexC = j;
-
-                    currentvalueC = n[i][j];
-                    counterC++;
-                    //System.out.print(startIndex + "; " + endIndex + "\t" );
-
-                }
-
-            }
-
-            System.out.print("\n");  
-            resultRow.append("\n");
-        }
-
-        //System.out.println(resultRow);
-        //System.out.println(count);
-    }
-
-   
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-
-    public static void coordinatesDiagonalyUp(int n[][]) {
-
-    }
-
-    public static void coordinatesDiagonalyDown(int n[][]) {
-        // check left-rising diagonals
-        for (int i = 0; i < n.length; i++) {
-            for (int j = i + 1, k = 1; j < n.length && k < n[j].length;
-                    j++, k++) {
-                if (n[j][k] == 0) {
-                    int d = j + 1;
-                    int e = k + 1;
-                    int f = j - 1;
-                    int g = k - 1;
-
-                    if ((n[j][k] == 0 && n[d][e] == 0) || (n[j][k] == 0 && n[f][g] == 0)) {
-                        //System.out.print(j + ", " + k + "\t");  
+                /*    track = endIndex - startIndex;
+                    if (track != 0 ) {
+                        track += 1;
                     }
+                    
+                     if (startIndex != 0 && track == 0)
+                    {
+                        track += 1;
+                    }*/
 
-                }
-
-            }
-        }
-        System.out.println("\n");
-        for (int i = 0; i < n.length; i++) {
-            for (int j = i + 1, k = n[i].length - 2; j < n.length && k >= 0; j++, k--) {
-                if (n[j][k] == 0) {
-                    int d = j + 1;
-                    int e = k - 1;
-                    int f = j - 1;
-                    int g = k + 1;
-
-                    if ((n[j][k] == 0 && n[d][e] == 0) || (n[j][k] == 0 && n[f][g] == 0)) {
-                        //System.out.print(j + ", " + k + "\t");  
+                    
+                    String y = String.format("%5s", i).replace(" ", "0");
+                    String z = null;
+                    String x = null;
+                    
+                    if (n[j][i] == 255)
+                    {
+                        x = String.format("%5s", j - 1).replace(" ", "0");
                     }
+                    else
+                    {
+                        x = String.format("%5s", j).replace(" ", "0");
+                    }
+                    
+                    if (n[j][i] == 0)
+                    {
+                        z = "D";
+                    }
+                    else
+                    {
+                        z = "U";
+                    }
+                    
+                    result.append("X");
+                    result.append(x);
+                    result.append("Y");
+                    result.append(y);
+                    result.append("Z");
+                    result.append(z);                    
+                    
+                            startIndex = i;
+
+                    currentvalue = n[j][i];
+                    counter++;
+                    
                 }
 
             }
-        }
 
-    }
-
-    public static int track(int endIndex, int startIndex) {
-        int track = endIndex - startIndex;
-
-        return track;
-    }
-
-    public static int testCoordinates(int n[][]) {
-        int useless = 0;
-        StringBuilder sb_0 = new StringBuilder();
-
-        StringBuilder sb_255 = new StringBuilder();
-
-        for (int i = 0; i < n.length; i++) {
-            for (int j = 0; j < n[i].length; j++) {
-                int d = j - 1;
-                int e = j + 1;
-
-                if ((n[i][j] == 0 && n[i][d] == 0) || (n[i][j] == 0 && n[i][e] == 0)) {
-
-                }
-
+            counterLine ++;
+            if (counterLine == 15)
+            {
+                result.append("\n");
+                counterLine = 0;
             }
+            
         }
+        
+        result.append("Q");
+        
+        System.out.println(result);
+            
+    } // ***************** end method coordinates ********************
 
-        System.out.print(sb_0);
-
-        System.out.println(sb_255);
-
-        return useless;
-    }
-
+    
+    
     public static int[][] transpose (int m[][])
     {
         if (m == null || m.length == 0)
@@ -285,4 +289,6 @@ public class littlepencilpusher { // start class
        }
        return l;
     }
+    
+ 
 }
