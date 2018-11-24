@@ -1,6 +1,7 @@
 package littlepencilpusher;
 
 import dk.sdu.mmmi.rd1.edgedetect.*;
+import dk.sdu.mmmi.rd1.robotcomm.RobotClient;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -24,6 +25,10 @@ public class littlepencilpusher
         BufferedImage image = edge.getBufferedImage();
         File outputfile = new File("images/Cirkelny.jpg");
         ImageIO.write(image, "jpg", outputfile);
+        
+        String plcIP = "192.168.1.15";
+        int plcPort = 12345;
+        
 
         /*
         here we get an array of the edge of the image we can work with. It is a 2d int array of the 
@@ -39,7 +44,18 @@ public class littlepencilpusher
         
         /*
         Indsæt RobotComm kodelinier her!!!
+              
         */
+        RobotClient client = new RobotClient(plcIP, plcPort);
+        client.connect();
+        if (!client.isConnected())
+        {
+            client.connect();
+        }
+        client.write();
+        
+        
+
     
     } // *******************end Main*******************************
 
@@ -263,6 +279,8 @@ public class littlepencilpusher
         result.append("Q");
         
         System.out.println(result);
+        plcOut = result.toString();
+
             
     } // ***************** end method coordinates ********************
 
