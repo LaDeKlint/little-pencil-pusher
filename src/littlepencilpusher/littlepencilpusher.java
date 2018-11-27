@@ -7,12 +7,13 @@ import java.io.IOException;
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
+import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
 
 public class littlepencilpusher
 { // start class
 
-    public static void main(String[] args) throws IOException
+    public static void main(String[] args) throws IOException, InterruptedException
     { // start main
 
         /*
@@ -20,13 +21,13 @@ public class littlepencilpusher
         og the edge we want to draw.
         The buffered image is saved as a new image file.
          */
-        EdgeDetector edge = new EdgeDetector("images/Android.jpg");
+        EdgeDetector edge = new EdgeDetector("images/android500.jpg");
         BufferedImage image = edge.getBufferedImage();
-        File outputfile = new File("images/AndroidNy.jpg");
+        File outputfile = new File("images/androidNy.jpg");
         ImageIO.write(image, "jpg", outputfile);
 
-        //String plcIP = "localhost";
-        String plcIP = "192.168.1.15";
+        String plcIP = "localhost";
+        //String plcIP = "192.168.1.15";
         int plcPort = 12345;
         String plcOut = "X00000Y00000ZU";
 
@@ -43,23 +44,26 @@ public class littlepencilpusher
 
         plcOut = coordinates(mag);
         System.out.println(plcOut.length());
-        sendToPlc(plcOut, plcIP, plcPort);
+        
+//        sendToPlc(plcOut, plcIP, plcPort);
+        sendToPlc("X00000Y00000ZUX00200Y00200ZDX00000Y00200ZDX00000Y00000ZDX00000Y00000ZU", plcIP, plcPort);
+        
+        
 
     } // *******************end Main*******************************
 
- 
     // Her skrives data til plc.
-    public static void sendToPlc(String plcOut, String plcIP, int plcPort) throws IOException
+    public static void sendToPlc(String plcOut, String plcIP, int plcPort) throws IOException, InterruptedException
     {
-
 
         TcpClient client = new TcpClient(plcIP, plcPort);
         String resp = "";
         // Hvor mange strenge skal vi sende?
         int strLen = 9800;    //længden af de strenge vi skal sende
         int strDiv = plcOut.length() / strLen; //antallet af hele strenge
-        System.out.println("Trying to send " + strDiv + " strings (plus remainder)");
+        System.out.println("Trying to send " + strDiv + " strings (plus remainder)\n");
         String plcOutSubstr = "";
+
 
         int divCount = 0;
         while (divCount <= strDiv)
@@ -69,10 +73,10 @@ public class littlepencilpusher
                 plcOutSubstr = plcOut.substring(divCount * strLen, divCount * strLen + strLen) + "Q";
             } else if (divCount == strDiv)
             {
-                plcOutSubstr = plcOut.substring(divCount * strLen) + "X00000Y00000ZUQ";  //her får vi den sidste rest med
+                plcOutSubstr = plcOut.substring(divCount * strLen) + "X00000Y00000ZUQ";  //her får vi den sidste rest med og sikrer, at vi kommer hjem.
             }
 
-            System.out.println(divCount + ": " + plcOutSubstr);
+            
             client.connect();
             if (!client.isConnected())
             {
@@ -80,10 +84,21 @@ public class littlepencilpusher
             }
             resp = client.write(plcOutSubstr);
             client.disconnect();
-            System.out.println(resp);
-            if (resp.equals("OK"))
+            System.out.println("PLC:" + resp);
+            
+            if (resp.equals("WAIT"))
             {
+                    System.out.println("Trying again in 15 seconds...");
+                    TimeUnit.SECONDS.sleep(15); //wait 15 seconcs
+
+            } else if (resp.equals("OK"))
+            {
+                System.out.println(divCount + ": " + plcOutSubstr);
                 divCount++;
+            }
+            else 
+            {
+                System.out.println("Something went wrong!");
             }
 
         }
