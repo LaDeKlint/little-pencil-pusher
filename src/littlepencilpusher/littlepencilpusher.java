@@ -21,13 +21,13 @@ public class littlepencilpusher
         og the edge we want to draw.
         The buffered image is saved as a new image file.
          */
-        EdgeDetector edge = new EdgeDetector("images/android500.jpg");
+        EdgeDetector edge = new EdgeDetector("images/Android500.jpg");
         BufferedImage image = edge.getBufferedImage();
-        File outputfile = new File("images/androidNy.jpg");
+        File outputfile = new File("images/AndroidNy.jpg");
         ImageIO.write(image, "jpg", outputfile);
 
-        String plcIP = "localhost";
-        //String plcIP = "192.168.1.15";
+        //String plcIP = "localhost";
+        String plcIP = "192.168.0.3";
         int plcPort = 12345;
         String plcOut = "X00000Y00000ZU";
 
@@ -45,8 +45,8 @@ public class littlepencilpusher
         plcOut = coordinates(mag);
         System.out.println(plcOut.length());
         
-//        sendToPlc(plcOut, plcIP, plcPort);
-        sendToPlc("X00000Y00000ZUX00200Y00200ZDX00000Y00200ZDX00000Y00000ZDX00000Y00000ZU", plcIP, plcPort);
+        sendToPlc(plcOut, plcIP, plcPort);
+        //sendToPlc("X00000Y00000ZUX00200Y00200ZDX00000Y00200ZDX00000Y00000ZDX00000Y00000ZU", plcIP, plcPort);
         
         
 
@@ -135,181 +135,181 @@ public class littlepencilpusher
     /*
      
      */
-    public static String coordinates(int n[][])
-    {
-
-        StringBuilder result = new StringBuilder();
+    public static String coordinates(int n[][]) {
+        
+        
+        StringBuilder result = new StringBuilder(); //this stringbuilder, builds the string that is send to the PLC
 
         // check rows;
-        int m[][] = new int[n[0].length][n.length];
+        int m[][] = new int[n[0].length][n.length]; // this is a new 2D array which is transposed, to get the right position.
+        
+        m = transpose(n); // this method turnes the array 90 deg. 
+        
+        int currentvalue; // testvalue where a shift in value is detected.
 
-        m = transpose(n);
+        // ****************** by row ****************************************
 
-        int currentvalue;
-
-        int startIndex;
-
-        int counterLine = 0;
-
-        for (int i = 0; i < n.length; i++)
+        for (int i = 0; i < m.length; i++) 
         {
+            
+            currentvalue = m[i][0]; // initial value is set to j=0 for each row
+           
 
-            currentvalue = n[i][0];
-
-            startIndex = 0;
-            int index = i;
-            int counter = 0;
-            int track = 0;
-            int endIndex = 0;
-
-            for (int j = 0; j < n[0].length; j++)
+            for (int j = 0; j < m[0].length; j++) 
             {
-
-                // System.out.print(n[i][j] + "\t");
-                if (currentvalue != n[i][j])
-                {
-
-                    index = i;
-                    if (counter >= 1)
-                    {
-                        endIndex = j - 1;
-                    }
-
-                    /*    track = endIndex - startIndex;
-                    if (track != 0 ) {
-                        track += 1;
-                    }
+                
+                if (currentvalue != m[i][j]) // As currentvalue is updated later ind the for-loop this statement compares the pressent value from 
+                {                            // the for-loop with the last value - currentvalue. Hence this statement detects a change in value. 
+                                             // the currentvalue variable is updated at line 174.
+                
                     
-                     if (startIndex != 0 && track == 0)
-                    {
-                        track += 1;
-                    }
-                     */
-                    String x = String.format("%5s", i).replace(" ", "0");
-                    String z = null;
+                   
+                    // the string needed to sent to the PLC has a very specific format. These following 3 string variables 
+                    // is used return this exact format wich is X00000Y00000Z(U/D). the last char behind Z is a key char that 
+                    // tells the PLC to raise or lover the Z axis.
+                    
                     String y = null;
-
-                    if (n[i][j] == 255)
-                    {
-                        y = String.format("%5s", j - 1).replace(" ", "0");
-                    } else
-                    {
-                        y = String.format("%5s", j).replace(" ", "0");
-                    }
-
-                    if (n[i][j] == 0)
-                    {
-                        z = "D";
-                    } else
-                    {
-                        z = "U";
-                    }
-
-                    result.append("X");
-                    result.append(x);
-                    result.append("Y");
-                    result.append(y);
-                    result.append("Z");
-                    result.append(z);
-
-                    startIndex = j;
-
-                    currentvalue = n[i][j];
-                    counter++;
-
-                }
-
-            }
-
-            counterLine++;
-//            if (counterLine == 15)
-//            {
-//                result.append("\n");
-//                counterLine = 0;
-//            }
-
-        }
-        for (int i = 0; i < n.length; i++)
-        {
-
-            currentvalue = n[0][i];
-            startIndex = 0;
-            int index = 0;
-            int counter = 0;
-            int track = 0;
-            int endIndex = 0;
-
-            for (int j = 0; j < n[0].length; j++)
-            {
-
-                if (currentvalue != n[j][i])
-                {
-
-                    index = j;
-                    if (counter >= 1)
-                    {
-                        endIndex = i - 1;
-                    }
-
-                    /*    track = endIndex - startIndex;
-                    if (track != 0 ) {
-                        track += 1;
-                    }
+                    String z = null; // As Z is determined by an if statement, it is initiated as null.
+                    String x = null; // X is likewise determined from an if statement and therefore initiated as null 
                     
-                     if (startIndex != 0 && track == 0)
-                    {
-                        track += 1;
-                    }*/
-                    String y = String.format("%5s", i).replace(" ", "0");
-                    String z = null;
-                    String x = null;
+                    
+                    int a = j + 2;
+                    int b = j + 1;
+                    int c = j - 1;
+                    int d = j - 2;
+                    
+                    if ((m[i][c] == 255 && m[i][j] == 0 && m[i][b] == 0 && m[i][a] == 255))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            if ((m[i][c] == 0 && m[i][j] == 0 && m[i][b] == 255 && m[i][d] == 255))
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                y = String.format("%5s", i).replace(" ", "0"); // this string sets the Y value as the i index.
 
-                    if (n[j][i] == 255)
-                    {
-                        x = String.format("%5s", j - 1).replace(" ", "0");
-                    } else
-                    {
-                        x = String.format("%5s", j).replace(" ", "0");
-                    }
+                                if (m[i][j] == 255) // if a change is found and the value is 255, the last value must have been 0, and therefore 
+                                {
+                                    x = String.format("%5s", j - 1).replace(" ", "0");
+                                }
+                                else
+                                {
+                                    x = String.format("%5s", j).replace(" ", "0");
+                                }
 
-                    if (n[j][i] == 0)
-                    {
-                        z = "D";
-                    } else
-                    {
-                        z = "U";
-                    }
+                                if (m[i][j] == 255)
+                                {
+                                    z = "D";
+                                }
+                                    else
+                                {
+                                z = "U";
+                                }
 
-                    result.append("X");
-                    result.append(x);
-                    result.append("Y");
-                    result.append(y);
-                    result.append("Z");
-                    result.append(z);
+                                result.append("X");
+                                result.append(x);
+                                result.append("Y");
+                                result.append(y);
+                                result.append("Z");
+                                result.append(z);                    
 
-                    startIndex = i;
-
-                    currentvalue = n[j][i];
-                    counter++;
-
+                            }
+                        }
+                    currentvalue = m[i][j];
                 }
 
             }
-
-            counterLine++;
-//            if (counterLine == 15)
-//            {
-//                result.append("\n");
-//                counterLine = 0;
-//            }
-
+            
         }
+            
+ //     ************************** by column **********************************
+            
+            for (int i = 0; i < m[0].length; i++) 
+            {
+            
+                currentvalue = n[i][0];
+            
 
-//        result.append("Q");
-        System.out.println(result);
+                for (int j = 0; j < m.length; j++) 
+                {
+                    if (currentvalue != m[j][i]) // As currentvalue is updated later ind the for-loop this statement compares the pressent value from 
+                    {                            // the for-loop with the last value - currentvalue. Hence this statement detects a change in value. 
+                                                 // the currentvalue variable is updated at line 174.
+                
+                    
+                   
+                        // the string needed to sent to the PLC has a very specific format. These following 3 string variables 
+                        // is used return this exact format wich is X00000Y00000Z(U/D). the last char behind Z is a key char that 
+                        // tells the PLC to raise or lover the Z axis.
+                    
+                        String y = null;
+                        String z = null; // As Z is determined by an if statement, it is initiated as null.
+                        String x = null; // X is likewise determined from an if statement and therefore initiated as null 
+                    
+                    
+                        int a = j + 2;
+                        int b = j + 1;
+                        int c = j - 1;
+                        int d = j - 2;
+                    
+                        if ((m[c][i] == 255 && m[j][i] == 0 && m[b][i] == 0 && m[a][i] == 255))
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            if ((m[c][i] == 0 && m[j][i] == 0 && m[b][i] == 255 && m[d][i] == 255))
+                            {
+                                continue;
+                            }
+                            else
+                            {
+                                x = String.format("%5s", i).replace(" ", "0"); // this string sets the Y value as the i index.
+
+                                if (m[j][i] == 255) // if a change is found and the value is 255, the last value must have been 0, and therefore 
+                                {
+                                    y = String.format("%5s", j - 1).replace(" ", "0");
+                                }
+                                else
+                                {
+                                    y = String.format("%5s", i).replace(" ", "0");
+                                }
+
+                                if (m[j][i] == 255)
+                                {
+                                    z = "D";
+                                }
+                                else
+                                {
+                                z = "U";
+                                }
+
+                                result.append("X");
+                                result.append(x);
+                                result.append("Y");
+                                result.append(y);
+                                result.append("Z");
+                                result.append(z);                    
+
+                            }
+                        }
+                    currentvalue = m[j][i];
+                    }
+
+                }
+             
+            }
+        
         return result.toString();
-
+        
+        
+            
     } // ***************** end method coordinates ********************
+
 
     public static int[][] transpose(int m[][])
     {
