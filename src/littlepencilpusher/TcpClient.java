@@ -4,6 +4,7 @@
  * and open the template in the editor.
  */
 package littlepencilpusher;
+
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.BufferedReader;
@@ -17,7 +18,9 @@ import java.util.logging.Logger;
  * @author lars
  */
 public class TcpClient
-{   private String hostname;
+{
+
+    private String hostname;
     private int port;
     private Socket connection;
     private PrintWriter out;
@@ -29,21 +32,26 @@ public class TcpClient
      * @param hostname Hostname of the robot
      * @param port Port of the robot
      */
-    public TcpClient(String hostname, int port) {
+    public TcpClient(String hostname, int port)
+    {
         this.hostname = hostname;
         this.port = port;
     }
 
     /**
-     * Method which connects to the robot, using the parameters provided to the constructor.
+     * Method which connects to the robot, using the parameters provided to the
+     * constructor.
      */
-    public void connect() {
-        try {
+    public void connect()
+    {
+        try
+        {
             connection = new Socket(hostname, port);
             out = new PrintWriter(connection.getOutputStream(), true);
             //tilføjet in-variabel der lytter på svar fra server
             in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        } catch (IOException ex) {
+        } catch (IOException ex)
+        {
             Logger.getLogger(TcpClient.class.getName()).log(Level.SEVERE, null, ex);
             System.out.println("Error connecting to robot: " + ex.getMessage());
             ex.printStackTrace();
@@ -57,18 +65,18 @@ public class TcpClient
      * @return COnnection state to see if connection is established (true) or
      * not (false).
      */
-    public boolean isConnected() {
+    public boolean isConnected()
+    {
         return connection.isConnected();
     }
-    
 
     /**
      * This method writes a message to the robot iff a connection to the robot
      * is established.
      *
      * @param message The message to write to the robot.
-     * @return 
-     * @throws java.io.IOException 
+     * @return
+     * @throws java.io.IOException
      */
     // tilføjet: returnerer svar fra server
     public String write(String message) throws IOException
@@ -81,20 +89,44 @@ public class TcpClient
             return resp;
         } else
         {
-            return "No respond!";
+            return "no response!";
         }
+    }
+
+    public boolean listenForOK() throws IOException
+    {
+        boolean ok = false;
+        String resp;
+        do
+        {
+            resp = in.readLine();
+            System.out.println("PLC: "+ resp);
+           
+            if ("OK".equals(resp))
+            {
+                ok = true;                
+                break;
+            }
+
+        } while (resp != null);
+        return ok;
+
     }
 
     /**
      * Method to close connection to the robot.
      */
-    public void disconnect() {
-        if (isConnected()) {
-            try {
+    public void disconnect()
+    {
+        if (isConnected())
+        {
+            try
+            {
                 connection.close();
-            } catch (IOException ex) {
+            } catch (IOException ex)
+            {
                 Logger.getLogger(TcpClient.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
-    }  
+    }
 }
