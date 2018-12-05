@@ -46,7 +46,7 @@ public class littlepencilpusher
         System.out.println(plcOut.length());
 
         sendToPlc(plcOut, plcIP, plcPort);
-        //sendToPlc("X00000Y00000ZUX00200Y00200ZDX00000Y00200ZDX00000Y00000ZDX00000Y00000ZU", plcIP, plcPort);
+
 
     } // *******************end Main*******************************
 
@@ -55,15 +55,18 @@ public class littlepencilpusher
     {
 
         TcpClient client = new TcpClient(plcIP, plcPort);
-        
-        // Hvor mange strenge skal vi sende?
-        int strLen = 9800;    //længden af de strenge vi skal sende
-        int strDiv = plcOut.length() / strLen; //antallet af hele strenge
-        System.out.println("Trying to send " + strDiv + " strings (plus remainder)\n");
-        String plcOutSubstr = "";
 
+        // Hvor mange strenge skal vi sende?
+        int strLen = 4900;                                                              //længden af de strenge der skal sende
+        int strDiv = plcOut.length() / strLen;                                          //antallet af hele strenge
+ 
+        String plcOutSubstr = "";
         String resp;
+        String endXY = "";
         int divCount = 0;
+        
+        System.out.println("Trying to send " + strDiv + " strings (plus remainder)\n");
+                
         while (divCount <= strDiv)
         {
             client.connect();
@@ -74,8 +77,16 @@ public class littlepencilpusher
             {
                 plcOutSubstr = plcOut.substring(divCount * strLen) + "X00000Y00000ZUQ";  //her får vi den sidste rest med og sikrer, at vi kommer hjem.
             }
+            if (divCount > 0)
+            {
+                resp = client.write(endXY + "ZU" + plcOutSubstr);
+            } else
+            {
+                resp = client.write(plcOutSubstr);
 
-            resp = client.write(plcOutSubstr);
+            }
+            endXY = plcOutSubstr.substring(plcOutSubstr.length() - 15, plcOutSubstr.length() - 3); // gemmer de sidste xy-koordinater i hver streng.
+
             System.out.println("Sending string #" + divCount);
             System.out.println("PLC:" + resp);
 
@@ -89,7 +100,6 @@ public class littlepencilpusher
                         client.disconnect();
                         break;
                     }
-                    
 
                 case "OK":
                     System.out.println(divCount + ": " + plcOutSubstr);
