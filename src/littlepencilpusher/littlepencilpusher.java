@@ -21,13 +21,13 @@ public class littlepencilpusher
         og the edge we want to draw.
         The buffered image is saved as a new image file.
          */
-        EdgeDetector edge = new EdgeDetector("images/rektangel.jpg");
+        EdgeDetector edge = new EdgeDetector("images/android.jpg");
         BufferedImage image = edge.getBufferedImage();
-        File outputfile = new File("images/rektangelNy.jpg");
+        File outputfile = new File("images/androidNy.jpg");
         ImageIO.write(image, "jpg", outputfile);
 
-        //String plcIP = "localhost";
-        String plcIP = "192.168.0.3";
+        String plcIP = "localhost";
+        //String plcIP = "192.168.0.3";
         int plcPort = 12345;
         String plcOut = "X00000Y00000ZU";
 
