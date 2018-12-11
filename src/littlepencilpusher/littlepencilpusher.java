@@ -12,6 +12,7 @@ import javax.imageio.ImageIO;
 
 public class littlepencilpusher
 { // start class
+    
 
     public static void main(String[] args) throws IOException, InterruptedException
     { // start main
@@ -97,7 +98,8 @@ public class littlepencilpusher
                     if (client.listenForOK())
                     {
                         divCount++;
-                        client.disconnect();
+//                        TimeUnit.SECONDS.sleep(3);
+//                        client.disconnect();
                         break;
                     }
 

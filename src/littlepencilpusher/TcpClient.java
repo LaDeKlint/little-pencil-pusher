@@ -48,7 +48,7 @@ public class TcpClient
         {
             connection = new Socket(hostname, port);
             out = new PrintWriter(connection.getOutputStream(), true);
-            //tilføjet in-variabel der lytter på svar fra server
+            //tilføjet in-variabel der lytter på svar fra server-streamen
             in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         } catch (IOException ex)
         {
@@ -92,7 +92,8 @@ public class TcpClient
             return "no response!";
         }
     }
-
+    
+    // følgende metode er tilføjtet. Den lytter på inputstreamen og returnerer TRUE, hvis vi modtager et 'OK'
     public boolean listenForOK() throws IOException
     {
         boolean ok = false;
