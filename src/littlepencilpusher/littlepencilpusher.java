@@ -22,9 +22,9 @@ public class littlepencilpusher
         og the edge we want to draw.
         The buffered image is saved as a new image file.
          */
-        EdgeDetector edge = new EdgeDetector("images/android.jpg");
+        EdgeDetector edge = new EdgeDetector("images/rektangelflad.jpg");
         BufferedImage image = edge.getBufferedImage();
-        File outputfile = new File("images/androidNy.jpg");
+        File outputfile = new File("images/rektangelfladNY.jpg");
         ImageIO.write(image, "jpg", outputfile);
 
         String plcIP = "localhost";
@@ -47,6 +47,9 @@ public class littlepencilpusher
         System.out.println(plcOut.length());
 
         sendToPlc(plcOut, plcIP, plcPort);
+        
+
+        
 
 
     } // *******************end Main*******************************
@@ -119,6 +122,7 @@ public class littlepencilpusher
 
     } //*********************end sendToPlc**********************
 
+    
     /*
     This method prints the magnitude array values, for a grafical representation of the array.
     It was made during the testfase, and does not carry any other funtionality 
