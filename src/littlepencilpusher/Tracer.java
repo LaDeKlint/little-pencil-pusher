@@ -16,6 +16,9 @@ public class Tracer
     {
 
     }
+    
+    // Det er meningen, at Peters nye metoder skal ind her.
+    // Indtil videre er det den gamle coordinates().
 
     public String coordinates(int n[][])
     {

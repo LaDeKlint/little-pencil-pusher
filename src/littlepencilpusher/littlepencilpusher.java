@@ -21,9 +21,9 @@ public class littlepencilpusher
         og the edge we want to draw.
         The buffered image is saved as a new image file.
          */
-        EdgeDetector edge = new EdgeDetector("images/rektangelflad.jpg");
+        EdgeDetector edge = new EdgeDetector("images/rektangel.jpg");
         BufferedImage image = edge.getBufferedImage();
-        File outputfile = new File("images/rektangelfladNY.jpg");
+        File outputfile = new File("images/output.jpg");
         ImageIO.write(image, "jpg", outputfile);
 
         String plcIP = "localhost";
@@ -44,10 +44,10 @@ public class littlepencilpusher
         plcOut = tracer.coordinates(mag);
         System.out.println(plcOut.length());
 
-        sendToPlc(plcOut, plcIP, plcPort);
+        //sendToPlc(plcOut, plcIP, plcPort);
 
         Debugger debug = new Debugger();
-        debug.stringToConsole(plcOut);
+        debug.stringToConsole(plcOut,false);
 
     } // *******************end Main*******************************
 
