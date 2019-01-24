@@ -53,5 +53,34 @@ public class Debugger
         }
 
     }
+    
+        /*
+    This method prints the magnitude array values, for a grafical representation of the array.
+    It was made during the testfase, and does not carry any other funtionality 
+    than the test opotunity.
+    The print lines have been commented out, as they are not needed for the actual program.
+    The transpose method is also tested here, as an atempt to make an alternative to just
+    change the index output
+    */
+    public void printMagnitudeArray(int n[][]) 
+    {// start method print
+        
+        Tracer trace = new Tracer();
+          
+        int m[][] = new int[n[0].length][n.length];
+        
+        m = trace.transpose(n);
+        
+        for (int columnB = 0 ; columnB < m.length ; columnB++)
+        { // start column for loop
+            for (int rowB = 0 ; rowB < m.length ; rowB++)
+            { // start row for loop
+                System.out.print(m[columnB][rowB] + "\t");
+                
+            } // end row for loop
+            System.out.println(" end column");
+        } // end column for loop
+        
+    } // ********************end print method************************
 
 }
