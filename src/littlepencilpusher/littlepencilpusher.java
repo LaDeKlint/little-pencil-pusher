@@ -26,8 +26,8 @@ public class littlepencilpusher
         File outputfile = new File("images/output.jpg");
         ImageIO.write(image, "jpg", outputfile);
 
-        String plcIP = "localhost";
-        //String plcIP = "192.168.0.3";
+        //String plcIP = "localhost";
+        String plcIP = "192.168.0.3";
         int plcPort = 12345;
         String plcOut = "X00000Y00000ZU";
 
@@ -44,7 +44,7 @@ public class littlepencilpusher
         
 
         plcOut = tracer.coordinates(mag);
-        System.out.println(plcOut.length());
+        
 
         sendToPlc(plcOut, plcIP, plcPort);
 
@@ -58,11 +58,12 @@ public class littlepencilpusher
     // Her skrives data til plc.
     public static void sendToPlc(String plcOut, String plcIP, int plcPort) throws IOException, InterruptedException
     {
+   
 
         TcpClient client = new TcpClient(plcIP, plcPort);
 
         // Hvor mange strenge skal vi sende?
-        int strLen = 4900;                                                              //længden af de strenge der skal sende
+        int strLen = 9660;                                                              //længden af de strenge der skal sende
         int strDiv = plcOut.length() / strLen;                                          //antallet af hele strenge
 
         String plcOutSubstr = "";
@@ -78,9 +79,11 @@ public class littlepencilpusher
             if (divCount < strDiv)
             {
                 plcOutSubstr = plcOut.substring(divCount * strLen, divCount * strLen + strLen) + "Q";
+                System.out.println("plcOutSubstr:" + plcOutSubstr.length());
             } else if (divCount == strDiv)
             {
                 plcOutSubstr = plcOut.substring(divCount * strLen) + "X00000Y00000ZUQ";  //her får vi den sidste rest med og sikrer, at vi kommer hjem.
+
             }
             if (divCount > 0)
             {
@@ -91,6 +94,7 @@ public class littlepencilpusher
 
             }
             endXY = plcOutSubstr.substring(plcOutSubstr.length() - 15, plcOutSubstr.length() - 3); // gemmer de sidste xy-koordinater i hver streng.
+            
 
             System.out.println("Sending string #" + divCount);
             System.out.println("PLC:" + resp);
@@ -101,9 +105,8 @@ public class littlepencilpusher
                     System.out.println("Waiting for PLC ...");
                     if (client.listenForOK())
                     {
-                        divCount++;
-//                        TimeUnit.SECONDS.sleep(3);
-//                        client.disconnect();
+                        divCount++;                     
+                        client.disconnect();
                         break;
                     }
 
@@ -119,6 +122,10 @@ public class littlepencilpusher
             }
 
         }
+//        System.out.println("sleeping");
+//        TimeUnit.SECONDS.sleep(3);
+//        System.out.println("disconnecting");
+        
         client.disconnect();
 
     } //*********************end sendToPlc**********************
