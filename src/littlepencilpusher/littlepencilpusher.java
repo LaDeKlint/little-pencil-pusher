@@ -4,10 +4,6 @@ import dk.sdu.mmmi.rd1.edgedetect.*;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.lang.reflect.Array;
-import java.util.ArrayList;
-import java.util.LinkedHashMap;
-import java.util.concurrent.TimeUnit;
 import javax.imageio.ImageIO;
 
 public class littlepencilpusher
@@ -40,25 +36,17 @@ public class littlepencilpusher
         return a binary truncate magnitude meaning it is eather "0" for black (draw) or "255" for white (don't draw)
          */
         int[][] mag = edge.getMagnitudeArray();
-        
-        
 
         plcOut = tracer.coordinates(mag);
-        
 
         sendToPlc(plcOut, plcIP, plcPort);
 
-        Debugger debug = new Debugger();
-        
-        debug.printMagnitudeArray(mag);
-        debug.stringToConsole(plcOut,false);
 
     } // *******************end Main*******************************
 
     // Her skrives data til plc.
     public static void sendToPlc(String plcOut, String plcIP, int plcPort) throws IOException, InterruptedException
     {
-   
 
         TcpClient client = new TcpClient(plcIP, plcPort);
 
@@ -122,9 +110,6 @@ public class littlepencilpusher
             }
 
         }
-//        System.out.println("sleeping");
-//        TimeUnit.SECONDS.sleep(3);
-//        System.out.println("disconnecting");
         
         client.disconnect();
 
